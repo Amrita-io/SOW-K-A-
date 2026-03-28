@@ -1,0 +1,33 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+venv/
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+build/
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# App
+uploads/
+*.pdf
+!README.pdf

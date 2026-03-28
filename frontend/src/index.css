@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg text-text;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-card p-6 shadow-card transition-shadow duration-200;
+  }
+
+  .card:hover {
+    @apply shadow-card-hover;
+  }
+
+  .btn-primary {
+    @apply bg-gold text-navy font-bold py-3 px-8 rounded-input 
+           hover:bg-gold-dark active:scale-[0.98] transition-all duration-200
+           inline-flex items-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-gold text-gold font-semibold py-3 px-8 rounded-input
+           hover:bg-gold hover:text-navy transition-all duration-200
+           inline-flex items-center gap-2;
+  }
+
+  .input-field {
+    @apply w-full border border-border rounded-input px-4 py-3 text-text 
+           focus:border-gold focus:ring-2 focus:ring-gold/20 focus:outline-none
+           transition-all duration-200 bg-surface;
+  }
+
+  .heading-xl {
+    @apply text-4xl md:text-5xl font-extrabold tracking-tight-heading leading-tight;
+  }
+
+  .heading-lg {
+    @apply text-2xl md:text-3xl font-extrabold tracking-tight-heading;
+  }
+
+  .heading-md {
+    @apply text-xl md:text-2xl font-bold;
+  }
+
+  .heading-sm {
+    @apply text-lg font-semibold;
+  }
+
+  .text-body {
+    @apply text-base leading-relaxed;
+  }
+
+  .text-secondary {
+    color: #64748B;
+    font-size: 0.875rem;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-gold {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gold/10 text-gold-dark;
+  }
+
+  .badge-emerald {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald/10 text-emerald-dark;
+  }
+
+  .badge-danger {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-danger/10 text-danger;
+  }
+
+  .badge-amber {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber/10 text-amber;
+  }
+
+  .section-tab {
+    @apply px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer;
+  }
+
+  .section-tab-active {
+    @apply px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer bg-navy text-gold;
+  }
+
+  .section-tab-inactive {
+    @apply px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer hover:text-text hover:bg-gray-100;
+    color: #64748B;
+  }
+
+  .gold-glow {
+    animation: pulse-gold 2s ease-in-out infinite;
+  }
+
+  .metric-value {
+    @apply text-3xl md:text-4xl font-extrabold tracking-tight-heading;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748B;
+}
+
+/* Indian number format animation */
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.count-animate {
+  animation: countUp 0.8s ease-out forwards;
+}
