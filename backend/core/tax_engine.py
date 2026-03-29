@@ -38,22 +38,40 @@ def _calculate_tax_from_slabs(taxable_income: float, slabs: list) -> float:
     return tax
 
 
+def _calculate_80gg_deduction(total_income: float, rent_annual: float) -> float:
+    """
+    Section 80GG: Deduction for rent paid (for non-salaried or those without HRA).
+    Min of:
+    1. 5000/mo (60000/yr)
+    2. 25% of total income
+    3. Rent paid - 10% of total income
+    """
+    if rent_annual <= 0 or total_income <= 0:
+        return 0.0
+    c1 = 60000
+    c2 = 0.25 * total_income
+    c3 = rent_annual - 0.10 * total_income
+    return max(0, min(c1, c2, c3))
+
+
 def calculate_old_regime_tax(
     gross_income: float,
+    is_salaried: bool = True,
     deductions_80c: float = 0,
     nps_80ccd_1b: float = 0,
     health_premium_self: float = 0,
     health_premium_parents: float = 0,
     parents_senior_citizen: bool = False,
     hra_exemption: float = 0,
+    rent_paid: float = 0,
     other_deductions: float = 0,
 ) -> dict:
     """
     Calculate tax under the old regime with all applicable deductions.
     Returns breakdown dict with taxable income, tax, cess, and total.
     """
-    # Standard deduction
-    total_deductions = OLD_REGIME_STANDARD_DEDUCTION
+    # Standard deduction (ONLY for salaried)
+    total_deductions = OLD_REGIME_STANDARD_DEDUCTION if is_salaried else 0
 
     # Section 80C (capped)
     total_deductions += min(deductions_80c, SECTION_80C_LIMIT)
@@ -70,8 +88,13 @@ def calculate_old_regime_tax(
     total_deductions += min(health_premium_self, SECTION_80D_SELF_LIMIT)
     total_deductions += min(health_premium_parents, parent_limit)
 
-    # HRA exemption
-    total_deductions += hra_exemption
+    # Rent-based deductions
+    if is_salaried:
+        # HRA exemption for salaried
+        total_deductions += hra_exemption
+    else:
+        # 80GG for self-employed paying rent
+        total_deductions += _calculate_80gg_deduction(gross_income, rent_paid)
 
     # Other deductions (LTA, etc.)
     total_deductions += other_deductions
@@ -97,12 +120,13 @@ def calculate_old_regime_tax(
     }
 
 
-def calculate_new_regime_tax(gross_income: float) -> dict:
+def calculate_new_regime_tax(gross_income: float, is_salaried: bool = True) -> dict:
     """
     Calculate tax under the new regime.
-    Only standard deduction applies — no other deductions.
+    Only standard deduction applies (for salaried only).
     """
-    taxable_income = max(0, gross_income - NEW_REGIME_STANDARD_DEDUCTION)
+    std_ded = NEW_REGIME_STANDARD_DEDUCTION if is_salaried else 0
+    taxable_income = max(0, gross_income - std_ded)
     base_tax = _calculate_tax_from_slabs(taxable_income, NEW_REGIME_SLABS)
 
     # Rebate u/s 87A
@@ -114,7 +138,7 @@ def calculate_new_regime_tax(gross_income: float) -> dict:
 
     return {
         "gross_income": gross_income,
-        "total_deductions": NEW_REGIME_STANDARD_DEDUCTION,
+        "total_deductions": std_ded,
         "taxable_income": taxable_income,
         "base_tax": base_tax,
         "cess": cess,
@@ -153,12 +177,14 @@ def calculate_hra_exemption(
 
 def recommend_regime(
     gross_income: float,
+    is_salaried: bool = True,
     deductions_80c: float = 0,
     nps_80ccd_1b: float = 0,
     health_premium_self: float = 0,
     health_premium_parents: float = 0,
     parents_senior_citizen: bool = False,
     hra_exemption: float = 0,
+    rent_paid: float = 0,
     other_deductions: float = 0,
 ) -> dict:
     """
@@ -167,15 +193,17 @@ def recommend_regime(
     """
     old_tax = calculate_old_regime_tax(
         gross_income=gross_income,
+        is_salaried=is_salaried,
         deductions_80c=deductions_80c,
         nps_80ccd_1b=nps_80ccd_1b,
         health_premium_self=health_premium_self,
         health_premium_parents=health_premium_parents,
         parents_senior_citizen=parents_senior_citizen,
         hra_exemption=hra_exemption,
+        rent_paid=rent_paid,
         other_deductions=other_deductions,
     )
-    new_tax = calculate_new_regime_tax(gross_income)
+    new_tax = calculate_new_regime_tax(gross_income, is_salaried)
 
     saving = new_tax["total_tax"] - old_tax["total_tax"]
     recommended = "old" if old_tax["total_tax"] <= new_tax["total_tax"] else "new"
@@ -272,9 +300,13 @@ def calculate_partner_tax_full(partner: dict) -> dict:
     hra_received_annual = basic_annual * partner.get("hra_pct", 0.40)
     rent_annual = partner.get("monthly_rent", 0) * 12
 
-    # Calculate HRA exemption
+    # Employment profile
+    emp_type = partner.get("employment_type", "salaried")
+    is_salaried = emp_type == "salaried"
+
+    # Calculate HRA exemption (only if salaried)
     hra_exemption = 0
-    if partner.get("employment_type") == "salaried" and rent_annual > 0:
+    if is_salaried and rent_annual > 0:
         hra_exemption = calculate_hra_exemption(
             basic_annual=basic_annual,
             hra_received_annual=hra_received_annual,
@@ -293,12 +325,14 @@ def calculate_partner_tax_full(partner: dict) -> dict:
     # Regime comparison
     regime_result = recommend_regime(
         gross_income=gross,
+        is_salaried=is_salaried,
         deductions_80c=partner.get("existing_80c", 0),
         nps_80ccd_1b=partner.get("nps_contribution", 0),
         health_premium_self=partner.get("health_premium", 0),
         health_premium_parents=partner.get("parent_health_premium", 0),
         parents_senior_citizen=partner.get("parents_senior_citizen", False),
         hra_exemption=hra_exemption,
+        rent_paid=rent_annual,
     )
 
     # Missed deductions (relevant only if old regime is better)
@@ -356,10 +390,13 @@ def calculate_hra_arbitrage(partner_a: dict, partner_b: dict) -> dict:
     a_hra_received = a_basic * partner_a.get("hra_pct", 0.40)
     b_hra_received = b_basic * partner_b.get("hra_pct", 0.40)
 
-    # Use the higher rent between the two (or the one paying rent)
+    # Use the higher rent between the two (assume it's the same household if both entry rent)
     rent_a = partner_a.get("monthly_rent", 0) * 12
     rent_b = partner_b.get("monthly_rent", 0) * 12
-    total_rent = max(rent_a, rent_b)  # whichever is the actual rent being paid
+    total_rent = max(rent_a, rent_b)
+    
+    # If one partner says they share rent but didn't enter a value, or entered a split value
+    # we treat the max entered as the reference.
 
     if total_rent <= 0:
         return {

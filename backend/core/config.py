@@ -1,5 +1,5 @@
 """
-CoupleWealth — Indian Tax & Financial Constants FY 2025-26
+SOW — Strategy Optimization Workspace — Indian Tax & Financial Constants FY 2025-26
 All values in INR unless otherwise noted.
 """
 
@@ -155,5 +155,5 @@ NIFTY_50_TRI_3Y_CAGR = 0.14  # approximate 3Y CAGR fallback
 # APP META
 # ═══════════════════════════════════════════════════════════
 
-APP_VERSION = "1.0.0"
-APP_NAME = "CoupleWealth"
+APP_VERSION = "2.0.0"
+APP_NAME = "SOW"

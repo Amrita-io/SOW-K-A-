@@ -35,6 +35,7 @@ class PartnerInput(BaseModel):
     city: str
     is_metro: bool
     monthly_rent: float = 0
+    shares_rent: bool = False
     existing_80c: float = 0
     nps_contribution: float = 0
     monthly_sip: float = 0

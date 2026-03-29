@@ -39,7 +39,7 @@ export default function CurrencyInput({ label, value, onChange, placeholder = '0
   }, [onChange]);
 
   const handleFocus = useCallback(() => {
-    if (value) setDisplayValue(value.toString());
+    if (value) setDisplayValue(value.toString().replace(/,/g, ''));
   }, [value]);
 
   const handleBlur = useCallback(() => {
@@ -47,14 +47,22 @@ export default function CurrencyInput({ label, value, onChange, placeholder = '0
   }, [value]);
 
   return (
-    <div className="space-y-1.5">
-      {label && (
-        <label className="block text-sm font-medium text-text">
-          {label} {required && <span className="text-danger">*</span>}
-        </label>
-      )}
-      <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted font-medium">₹</span>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        {label && (
+          <label className="text-sm font-bold text-prime uppercase tracking-wider block">
+            {label} {required && <span className="text-danger">*</span>}
+          </label>
+        )}
+        {value > 0 && (
+          <p className="text-xs text-accent font-bold uppercase tracking-widest px-2 py-0.5 bg-accent/5 rounded-md border border-accent/10 transition-all duration-300">
+            ₹{shortINR(value)}
+          </p>
+        )}
+      </div>
+
+      <div className="relative group">
+        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-text-light/40 font-bold text-lg select-none group-focus-within:text-prime transition-colors duration-300">₹</span>
         <input
           type="text"
           inputMode="numeric"
@@ -63,16 +71,13 @@ export default function CurrencyInput({ label, value, onChange, placeholder = '0
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={placeholder}
-          className="input-field pl-8"
+          className="input-field pl-12 pr-12 text-lg font-semibold"
         />
         {suffix && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-xs">{suffix}</span>
+          <span className="absolute right-6 top-1/2 -translate-y-1/2 text-text-light/40 text-xs font-bold uppercase tracking-widest">{suffix}</span>
         )}
       </div>
-      {helpText && <p className="text-xs text-muted">{helpText}</p>}
-      {value > 0 && (
-        <p className="text-xs text-gold font-medium">₹{shortINR(value)}</p>
-      )}
+      {helpText && <p className="text-[11px] text-text-light/60 font-medium px-1 leading-relaxed">{helpText}</p>}
     </div>
   );
 }

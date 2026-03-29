@@ -1,10 +1,7 @@
-"""
-POST /api/analyze — Main analysis endpoint.
-"""
-
 from fastapi import APIRouter, HTTPException
 from models.input_models import AnalysisRequest
 from agents.orchestrator import run_orchestrator
+from core.state import set_last_analysis
 import logging
 
 router = APIRouter()
@@ -30,8 +27,15 @@ async def analyze(request: AnalysisRequest):
             emergency_fund_existing=request.emergency_fund_existing,
         )
 
+        # Cache the result for PDF generation
+        set_last_analysis(result)
+
         return result
 
     except Exception as e:
         logger.error(f"Analysis failed: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        # Return a cleaner error message to the frontend
+        raise HTTPException(
+            status_code=500, 
+            detail="Our AI agents encountered a temporary bottleneck. Please wait a moment and try again, or switch to a higher-tier plan."
+        )

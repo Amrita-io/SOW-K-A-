@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const DEMO_PARTNER_A = {
-  name: 'Aditya', age: 32, employment_type: 'salaried',
+  name: 'Partner A', age: 32, employment_type: 'salaried',
   annual_ctc: 1800000, basic_pct: 0.45, hra_pct: 0.40,
   city: 'Bangalore', is_metro: false, monthly_rent: 20000,
   existing_80c: 80000, nps_contribution: 0, monthly_sip: 10000,
@@ -11,7 +11,7 @@ const DEMO_PARTNER_A = {
 };
 
 const DEMO_PARTNER_B = {
-  name: 'Priya', age: 29, employment_type: 'salaried',
+  name: 'Partner B', age: 29, employment_type: 'salaried',
   annual_ctc: 1100000, basic_pct: 0.45, hra_pct: 0.40,
   city: 'Bangalore', is_metro: false, monthly_rent: 0,
   existing_80c: 40000, nps_contribution: 0, monthly_sip: 5000,

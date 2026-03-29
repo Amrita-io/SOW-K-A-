@@ -32,17 +32,21 @@ def _target_equity_pct(age: int) -> float:
 def analyze_mf_portfolio(holdings: list, partner_age: int = 30) -> dict:
     """Full portfolio analysis."""
     if not holdings:
+        logger.info("No holdings provided — skipping portfolio analysis.")
         return {
             "total_invested": 0,
             "total_current": 0,
             "total_value": 0,
+            "absolute_return": 0,
+            "absolute_return_pct": 0,
             "xirr": 0,
-            "benchmark_xirr": 14.0,
-            "expense_drag_annual": 0,
+            "benchmark_xirr": 0,
+            "alpha": 0,
             "allocation": {},
-            "overlap_warnings": [],
             "rebalancing": [],
             "recommended_switches": [],
+            "expense_drag_annual": 0,
+            "overlap_warnings": [],
         }
 
     total_invested = sum(h.get("invested_amount", 0) for h in holdings)

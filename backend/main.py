@@ -1,5 +1,5 @@
 """
-CoupleWealth — FastAPI Main Application
+SOW — Strategy Optimization Workspace — FastAPI Main Application
 """
 
 import os
@@ -22,7 +22,7 @@ load_dotenv()
 from core.config import APP_NAME, APP_VERSION
 from routes.analysis import router as analysis_router
 from routes.upload import router as upload_router
-from routes.report import router as report_router, cache_analysis
+from routes.report import router as report_router
 
 # Configure logging
 logging.basicConfig(
@@ -36,11 +36,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
     logger.info(f"{APP_NAME} v{APP_VERSION} starting...")
-    gemini_key = os.environ.get("GEMINI_API_KEY", "")
-    if not gemini_key or gemini_key == "your_gemini_api_key_here":
-        logger.warning("GEMINI_API_KEY not set — AI narratives will be unavailable. Math-only mode.")
-    else:
-        logger.info("Gemini API key configured.")
+    logger.info("Local Intelligence Engine (Ollama) initialized.")
     yield
     logger.info(f"{APP_NAME} shutting down.")
 
@@ -48,7 +44,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="India's first AI-powered joint financial intelligence engine",
+    description="SOW — Strategy Optimization Workspace — Indian joint financial intelligence",
     lifespan=lifespan,
 )
 

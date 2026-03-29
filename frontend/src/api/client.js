@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -22,12 +22,12 @@ export const uploadCAMS = async (file) => {
   return response.data;
 };
 
-export const downloadReport = async () => {
-  const response = await api.get('/api/report/pdf', { responseType: 'blob' });
+export const downloadReport = async (data) => {
+  const response = await api.post('/api/report/pdf', data, { responseType: 'blob' });
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', 'CoupleWealth_Report.pdf');
+  link.setAttribute('download', 'SOW_Financial_Report.pdf');
   document.body.appendChild(link);
   link.click();
   link.remove();

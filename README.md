@@ -1,98 +1,50 @@
-# CoupleWealth
+# SOW v2.0.0 — Strategy Optimization Workspace
 
-**India's first AI-powered joint financial intelligence engine**
+SOW is a private-first, agent-driven intelligence workspace designed to optimize the shared financial trajectories of modern Indian households. It leverages local Large Language Models (LLMs) and deterministic tax-engines to deliver high-fidelity, actionable dossiers for wealth optimization.
 
-> "We don't show you a dashboard. We recover your money."
+---
 
-CoupleWealth analyzes Indian couples' finances across 7 pillars — tax optimization, investment allocation, insurance adequacy, goal planning, market intelligence, portfolio analysis, and money health scoring — to find exactly how much money you're losing every year and how to recover it.
+## ⚡ Core Intelligence Features
 
-## Features
+### 1. Household Tax Arbitrage (Agentic)
+*   **HRA Synergy**: Automatically identifies the optimal rent-claimant in a two-partner household for maximum bracket efficiency.
+*   **Section 80GG Support**: Specialized relief for entrepreneurs and business profiles without formal HRA components.
+*   **Dual-Regime Audit**: Direct comparison of Old vs. New Tax Regimes (FY 2025-26) with automated investment suggestions.
 
-- **Dual-Income Tax Optimization** — Old vs New regime comparison for each partner independently
-- **HRA Arbitrage** — Determines which partner should claim rent for maximum tax benefit
-- **Joint SIP Allocation** — scipy linear programming to minimize combined tax via optimal ELSS/NPS splits
-- **FIRE Calculator** — Projects retirement age at current vs optimized savings rates
-- **Insurance Audit** — HLV-based term cover gap analysis, health cover adequacy, 80D optimization
-- **Market Intelligence** — Fund performance signals, expense drag analysis, overlap detection
-- **Money Health Score** — 0-100 score across 6 dimensions with projected improvement
+### 2. SOW Money Health Score
+*   **6-Dimensional Wellness Audit**: Evaluates Emergency Liquidity, Insurance Adequacy, Investment Maturity, Tax Efficiency, Debt Health, and Retirement Readiness.
+*   **Risk Intelligence**: Proactively flags "Grade D/E" alerts for high-CTC households with insufficient liquid buffers.
 
-## Tech Stack
+### 3. Local-First AI (Privacy First)
+*   **Zero-Egress Analysis**: All narrative synthesis is performed locally via **Ollama (Mistral)**. No financial data leaves your local machine.
+*   **JSON Resilience**: Features a built-in repair orchestrator to guarantee stable outputs from non-deterministic local model responses.
 
-**Backend:** Python 3.11+ / FastAPI / Google Gemini 2.0 Flash / scipy / numpy-financial / pyxirr  
-**Frontend:** React 18 / Vite / Tailwind CSS v3 / Recharts / Framer Motion / Zustand
+### 4. Premium Reporting
+*   **Executive Dossiers**: Generates professional PDF dossiers with priority action plans and long-term goal roadmaps.
+*   **Unicode Safe**: Fully optimized for Indian financial symbols and complex multi-partner data structures.
 
-## Prerequisites
+---
 
-- Python 3.11+
-- Node.js 18+
-- Google Gemini API key (optional — app works with math-only fallback)
+## 🚀 Quick Start
 
-## Setup
+### Prerequisites
+*   **Python 3.10+** & **Node.js 18+**
+*   **Ollama**: Pull the mistral model (`ollama pull mistral`)
 
-### Backend
+### Installation
+1.  **Clone repo** and navigate to root.
+2.  **Start Backend**: `cd backend && pip install -r requirements.txt && python main.py`
+3.  **Start Frontend**: `cd frontend && npm install && npm run dev`
 
-```bash
-cd backend
-python -m venv venv
+---
 
-# Windows
-venv\Scripts\activate
-# Mac/Linux
-source venv/bin/activate
+## 📋 Testing
+Use the `TEST_DATA.md` dossier to stress-test the engine with high-fidelity scenarios (Salaried Synergy, Entrepreneur Arbitrage, and High-Wealth Risk).
 
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
+---
 
-uvicorn main:app --reload --port 8000
-```
+## 🔒 Security
+Designed for local intelligence. By default, SOW routes all synthesis to `localhost:11434`. Data stays in-memory; zero persistent local storage of sensitive identifiers.
 
-### Frontend
-
-```bash
-cd frontend
-npm install
-cp .env.example .env
-npm run dev
-```
-
-### Access
-
-Open [http://localhost:5173](http://localhost:5173)
-
-## Demo
-
-Click **"Try with demo data"** on the landing page to instantly load sample data (Aditya + Priya) and run a full analysis.
-
-## Architecture
-
-```
-couplewealth/
-├── backend/
-│   ├── agents/          # 7 AI agents + Gemini orchestrator
-│   ├── core/            # Pure Python calculation engines
-│   ├── data/            # CAMS parser, market data fetcher
-│   ├── models/          # Pydantic v2 schemas
-│   ├── routes/          # FastAPI endpoints
-│   ├── report/          # PDF report generator
-│   └── main.py          # FastAPI app
-└── frontend/
-    └── src/
-        ├── api/         # Axios client
-        ├── components/  # Inputs, layout, results, shared
-        ├── pages/       # 6 step-based pages
-        └── store/       # Zustand stores
-```
-
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/analyze` | Run complete financial analysis |
-| POST | `/api/upload/cams` | Upload CAMS PDF statement |
-| GET | `/api/report/pdf` | Download PDF report |
-| GET | `/api/health` | Health check |
-
-## License
-
-MIT
+---
+*Created by the SOW Intelligence Team — 2026*

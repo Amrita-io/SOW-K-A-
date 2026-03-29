@@ -1,35 +1,44 @@
 import React from 'react';
 import { CheckIcon } from '../shared/icons/index';
 
-const steps = ['Welcome', 'Partner A', 'Partner B', 'Goals', 'Portfolio', 'Analysis', 'Results'];
+const steps = [
+  { id: 1, label: 'Partner A', sub: 'Personal & salary details' },
+  { id: 2, label: 'Partner B', sub: 'Personal & salary details' },
+  { id: 3, label: 'Goals', sub: 'Life goals & portfolio' },
+  { id: 4, label: 'Portfolio', sub: 'Investment holdings' },
+  { id: 5, label: 'Analysis', sub: 'AI-powered insights' },
+];
 
 export default function ProgressBar({ currentStep }) {
   return (
-    <div className="w-full bg-surface border-b border-border px-4 py-3">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between">
-          {steps.map((label, i) => {
-            const isCompleted = i < currentStep;
-            const isCurrent = i === currentStep;
-            return (
-              <div key={label} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
-                    ${isCompleted ? 'bg-gold text-navy' : isCurrent ? 'bg-navy text-gold ring-2 ring-gold/30' : 'bg-gray-100 text-muted'}`}>
-                    {isCompleted ? <CheckIcon className="w-4 h-4" /> : i + 1}
-                  </div>
-                  <span className={`text-[10px] mt-1 font-medium hidden sm:block ${isCurrent ? 'text-navy' : 'text-muted'}`}>
-                    {label}
-                  </span>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className={`w-6 sm:w-12 h-0.5 mx-1 ${isCompleted ? 'bg-gold' : 'bg-gray-200'}`} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+    <div className="flex flex-col gap-10 relative">
+      <div className="absolute left-4 top-2 bottom-2 w-[1px] bg-border/40" />
+      
+      {steps.map((step, i) => {
+        const stepNum = i + 1;
+        const isCompleted = stepNum < currentStep;
+        const isCurrent = stepNum === currentStep;
+        
+        return (
+          <div key={step.label} className="flex items-start gap-4 group relative">
+            <div 
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all duration-300
+                ${isCompleted ? 'bg-accent text-white' : isCurrent ? 'bg-accent/10 border-2 border-accent text-prime shadow-lg shadow-accent/10' : 'bg-surface-muted text-text-muted border border-border/60'}`}
+            >
+              {isCompleted ? <CheckIcon className="w-4 h-4" /> : stepNum}
+            </div>
+            
+            <div className="flex flex-col pt-0.5">
+              <span className={`text-sm font-bold tracking-tight transition-colors duration-300 ${isCurrent ? 'text-prime uppercase' : 'text-text-light'}`}>
+                {step.label}
+              </span>
+              <span className={`text-[11px] font-medium leading-tight ${isCurrent ? 'text-text-light' : 'text-text-muted/60'}`}>
+                {step.sub}
+              </span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

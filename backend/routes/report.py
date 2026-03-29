@@ -10,29 +10,19 @@ import logging
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# In-memory cache for last analysis result (for demo)
-_last_analysis = {}
-
-
-def cache_analysis(result: dict):
-    """Cache the latest analysis result for report generation."""
-    global _last_analysis
-    _last_analysis = result
-
-
-@router.get("/api/report/pdf")
-async def get_report_pdf():
-    """Generate and return PDF report from cached analysis."""
-    if not _last_analysis:
-        raise HTTPException(status_code=404, detail="No analysis results available. Run analysis first.")
+@router.post("/api/report/pdf")
+async def get_report_pdf(analysis: dict):
+    """Stateless PDF generation: Takes analysis JSON and returns PDF bytes."""
+    if not analysis:
+        raise HTTPException(status_code=400, detail="No analysis data provided in request body.")
 
     try:
-        pdf_bytes = generate_couple_report(_last_analysis)
+        pdf_bytes = generate_couple_report(analysis)
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",
             headers={
-                "Content-Disposition": "attachment; filename=CoupleWealth_Report.pdf"
+                "Content-Disposition": "attachment; filename=SOW_Financial_Report.pdf"
             },
         )
     except Exception as e:

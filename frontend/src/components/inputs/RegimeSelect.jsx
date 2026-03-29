@@ -8,22 +8,22 @@ const options = [
 
 export default function RegimeSelect({ value, onChange }) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <label className="block text-sm font-medium text-text">Tax Regime</label>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {options.map((opt) => (
           <button
             key={opt.value}
             type="button"
             onClick={() => onChange(opt.value)}
-            className={`p-3 rounded-input border text-center transition-all ${
+            className={`p-3 rounded-button border text-center transition-all ${
               value === opt.value
-                ? 'border-gold bg-gold/5 text-navy ring-2 ring-gold/20'
-                : 'border-border text-muted hover:border-gold/50'
+                ? 'border-accent bg-accent/5 text-prime ring-2 ring-accent/20 shadow-sm'
+                : 'border-border text-text-muted hover:border-accent/50 bg-surface'
             }`}
           >
             <div className="text-sm font-semibold">{opt.label}</div>
-            <div className="text-[10px] text-muted mt-0.5">{opt.desc}</div>
+            <div className="text-[10px] sm:text-xs text-text-light mt-1">{opt.desc}</div>
           </button>
         ))}
       </div>

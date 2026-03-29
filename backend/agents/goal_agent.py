@@ -47,16 +47,13 @@ def plan_financial_goals(
     goal_result = plan_all_goals(goals, risk_profile, investable_surplus + combined_sip)
 
     # FIRE projection
-    retirement_goal = next(
-        (g for g in goals if g.get("goal_type") in ("retirement", "fire")), None
-    )
+    retirement_goal = next((g for g in goals if g.get("goal_type") in ("retirement", "fire")), None)
     retirement_age_target = 55
-    monthly_retirement_expenses = monthly_expenses if monthly_expenses > 0 else 100000
-
+    monthly_retirement_expenses = monthly_expenses
+    
     if retirement_goal:
         retirement_age_target = retirement_goal.get("target_year", 55)
         if retirement_age_target > 2000:
-            # target_year is a calendar year, convert to age
             younger_age = min(partner_a.get("age", 30), partner_b.get("age", 30))
             from datetime import datetime
             current_year = datetime.now().year
@@ -73,7 +70,7 @@ def plan_financial_goals(
     )
 
     # Emergency fund analysis
-    emergency_target = monthly_expenses * 6 if monthly_expenses > 0 else 300000
+    emergency_target = monthly_expenses * 6 if monthly_expenses > 0 else 0
     emergency_gap = max(0, emergency_target - emergency_fund_existing)
 
     return {

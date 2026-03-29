@@ -31,3 +31,7 @@ Thumbs.db
 uploads/
 *.pdf
 !README.pdf
+
+# Internal docs — private architecture and LLM context files
+# These are NEVER pushed to GitHub
+docs/

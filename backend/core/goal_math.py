@@ -172,31 +172,53 @@ def plan_all_goals(
     investable_surplus: float = 0,
 ) -> dict:
     """
-    Plan all goals and detect conflicts.
+    Plan all goals, distribute available surplus by priority, and detect conflicts.
     """
     current_year = datetime.now().year
     planned = []
     total_sip_needed = 0
+    remaining_budget = investable_surplus
 
+    # Prepare goals with their basic requirements first
+    temp_goals = []
     for goal in goals:
+        years = max(1, goal.get("target_year", current_year + 10) - current_year)
+        future_cost = calculate_future_value(goal.get("present_cost", 0), years, goal.get("goal_type", "general"))
+        needed_sip = calculate_required_sip(future_cost, years, risk_profile)
+        
+        temp_goals.append({
+            "name": goal.get("name", "Goal"),
+            "present_cost": goal.get("present_cost", 0),
+            "target_year": goal.get("target_year", current_year + 10),
+            "goal_type": goal.get("goal_type", "general"),
+            "years_remaining": years,
+            "required_monthly_sip": needed_sip
+        })
+        total_sip_needed += needed_sip
+
+    # Sort by priority (shorter timeline = higher priority)
+    temp_goals.sort(key=lambda g: g["years_remaining"])
+
+    # Distribute budget
+    for tg in temp_goals:
+        allocated = min(tg["required_monthly_sip"], remaining_budget)
+        remaining_budget -= allocated
+        
+        # Run full analysis with allocated SIP
         result = plan_single_goal(
-            name=goal.get("name", "Goal"),
-            present_cost=goal.get("present_cost", 0),
-            target_year=goal.get("target_year", current_year + 10),
-            goal_type=goal.get("goal_type", "general"),
+            name=tg["name"],
+            present_cost=tg["present_cost"],
+            target_year=tg["target_year"],
+            goal_type=tg["goal_type"],
             risk_profile=risk_profile,
-            current_sip_allocated=goal.get("current_sip_allocated", 0),
+            current_sip_allocated=allocated,
             current_year=current_year,
         )
         planned.append(result)
-        total_sip_needed += result["required_monthly_sip"]
 
     # Conflict detection
     has_conflict = total_sip_needed > investable_surplus > 0
-    sip_shortfall = max(0, total_sip_needed - investable_surplus) if investable_surplus > 0 else 0
-
-    # Priority ranking (shorter timeline = higher priority for funding)
-    planned.sort(key=lambda g: g["years_remaining"])
+    sip_shortfall = max(0, total_sip_needed - investable_surplus)
 
     return {
         "goals": planned,
@@ -205,10 +227,9 @@ def plan_all_goals(
         "sip_shortfall": sip_shortfall,
         "has_conflict": has_conflict,
         "conflict_message": (
-            f"Your goals need ₹{total_sip_needed:,}/month but you have "
-            f"₹{investable_surplus:,}/month available. "
-            f"Shortfall: ₹{sip_shortfall:,}/month. Consider prioritizing "
-            f"or extending timelines."
+            f"Your goals need ₹{total_sip_needed:,.0f}/month but you have "
+            f"₹{investable_surplus:,.0f}/month available. "
+            f"Shortfall: ₹{sip_shortfall:,.0f}/month."
         ) if has_conflict else None,
     }
 
